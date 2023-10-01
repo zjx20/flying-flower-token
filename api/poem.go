@@ -1,4 +1,4 @@
-package token
+package poem
 
 import (
 	"embed"

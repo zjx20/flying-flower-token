@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>飞花令</title>
+    <!-- 这里是我们添加的代码，用来设置视口 -->
+    <!-- 我们用 width=device-width 来指定视口的宽度等于设备的宽度 -->
+    <!-- 我们用 initial-scale=1 来指定视口的初始缩放比例为 1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* 这里是一些 CSS 样式，用来控制网页的外观 */
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 36px;
+            color: #333;
+        }
+        .header p {
+            font-size: 18px;
+            color: #666;
+        }
+        .form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .form input {
+            width: 300px;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 18px;
+        }
+        .form button {
+            width: 100px;
+            height: 40px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .results h2 {
+            font-size: 24px;
+            color: #333;
+        }
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+        .results li {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .results li h3 {
+            font-size: 18px;
+            color: #333;
+        }
+        .results li h4 {
+            font-size: 16px;
+            color: #333;
+        }
+        .results li p {
+            font-size: 16px;
+            color: #666;
+            white-space: pre-wrap;
+        }
+        /* 这里是我们添加的样式，用来定义高亮效果 */
+        .highlight {
+            background-color: yellow;
+        }
+        /* 这里是我们添加的媒体查询，用来根据不同的屏幕尺寸，应用不同的样式规则 */
+        /* 我们用 @media 来定义一个媒体查询 */
+        /* 我们用 (max-width: 600px) 来指定一个条件，当屏幕的宽度小于或等于 600px 时，就应用下面的样式规则 */
+        @media (max-width: 600px) {
+            /* 我们用 .container 来选择 container 类的元素 */
+            /* 我们用 max-width: 100% 来指定容器的最大宽度为 100% */
+            .container {
+                max-width: 100%;
+            }
+            /* 我们用 .form 来选择 form 类的元素 */
+            /* 我们用 flex-direction: column 来指定表单的方向为垂直 */
+            .form {
+                flex-direction: column;
+            }
+            /* 我们用 .form input 来选择 form 类的元素中的 input 元素 */
+            /* 我们用 width: 80% 来指定输入框的宽度为 80% */
+            .form input {
+                width: 80%;
+            }
+            /* 我们用 .form button 来选择 form 类的元素中的 button 元素 */
+            /* 我们用 width: 80% 来指定按钮的宽度为 80% */
+            /* 我们用 margin-left: 0 来指定按钮的左边距为 0 */
+            /* 我们用 margin-top: 10px 来指定按钮的上边距为 10px */
+            .form button {
+                width: 80%;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>飞花令</h1>
+            <p>请输入一个字或词，查看包含该字词的诗句</p>
+        </div>
+        <div class="form">
+            <!-- 这里是一个表单，用来接收用户的输入 -->
+            <!-- 我们用 GET 方法来发送请求，把用户输入的字或词作为 q 参数 -->
+            <form method="GET" action="/">
+                <input type="text" name="q" value="{{.Query}}" placeholder="请输入一个字或词">
+                <button type="submit">搜索</button>
+            </form>
+        </div>
+        <div class="results">
+            <!-- 这里是一个条件判断，如果用户输入了字或词，就显示搜索结果 -->
+            {{if .Query}}
+            <h2>搜索结果</h2>
+            <ul>
+                {{- $query := .Query -}}
+                <!-- 这里是一个循环，遍历搜索结果，每一个结果都用一个列表项来展示 -->
+                {{range .Results}}
+                <li>
+                    <!-- 这里是我们添加的代码，用来替换目标关键字为高亮标签 -->
+                    <!-- 我们用 Replace 方法来处理标题和内容，把目标关键字替换为带有 highlight 类的 span 标签 -->
+                    <!-- 我们用 safehtml 方法来防止 HTML 转义，保留我们的标签 -->
+                    <h3>{{.Title | replace $query (print "<span class='highlight'>" $query "</span>") | safehtml}}</h3>
+                    <h4>{{.Author | replace $query (print "<span class='highlight'>" $query "</span>") | safehtml}}</h4>
+                    <p>{{.Content | replace $query (print "<span class='highlight'>" $query "</span>") | safehtml}}</p>
+                </li>
+                {{end}}
+            </ul>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>
